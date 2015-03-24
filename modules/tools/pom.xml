@@ -74,4 +74,8 @@
             </dependencies>
         </profile>
     </profiles>
+
+  <scm>
+    <tag>ignite-release-test-i-1-branch</tag>
+  </scm>
 </project>
