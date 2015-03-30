@@ -224,4 +224,8 @@
             </plugin>
         </plugins>
     </build>
+
+  <scm>
+    <tag>ignite-release-test-1-branch</tag>
+  </scm>
 </project>

@@ -52,4 +52,8 @@
             <version>1.0.1-RC1-SNAPSHOT</version>
         </dependency>
     </dependencies>
+
+  <scm>
+    <tag>ignite-release-test-1-branch</tag>
+  </scm>
 </project>
