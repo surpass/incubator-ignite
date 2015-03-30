@@ -31,13 +31,13 @@
     </parent>
 
     <artifactId>ignite-clients</artifactId>
-    <version>1.0.1-RC1-SNAPSHOT</version>
+    <version>1.0.1-RC1TESTRELEASE</version>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.ignite</groupId>
             <artifactId>ignite-core</artifactId>
-            <version>1.0.1-RC1-SNAPSHOT</version>
+            <version>1.0.1-RC1TESTRELEASE</version>
         </dependency>
 
         <dependency>
@@ -56,21 +56,21 @@
         <dependency>
             <groupId>org.apache.ignite</groupId>
             <artifactId>ignite-indexing</artifactId>
-            <version>1.0.1-RC1-SNAPSHOT</version>
+            <version>1.0.1-RC1TESTRELEASE</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.ignite</groupId>
             <artifactId>ignite-log4j</artifactId>
-            <version>1.0.1-RC1-SNAPSHOT</version>
+            <version>1.0.1-RC1TESTRELEASE</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.ignite</groupId>
             <artifactId>ignite-rest-http</artifactId>
-            <version>1.0.1-RC1-SNAPSHOT</version>
+            <version>1.0.1-RC1TESTRELEASE</version>
             <scope>test</scope>
         </dependency>
 
@@ -85,7 +85,7 @@
         <dependency>
             <groupId>org.apache.ignite</groupId>
             <artifactId>ignite-core</artifactId>
-            <version>1.0.1-RC1-SNAPSHOT</version>
+            <version>1.0.1-RC1TESTRELEASE</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
@@ -130,6 +130,6 @@
     </build>
 
   <scm>
-    <tag>ignite-release-test-1-branch</tag>
+    <tag>1.0.1-RC1TESTRELEASE</tag>
   </scm>
 </project>
