@@ -31,7 +31,7 @@
     </parent>
 
     <artifactId>ignite-ssh</artifactId>
-    <version>1.0.1-RC1-SNAPSHOT</version>
+    <version>1.0.1-RC1-RELEASETEST</version>
 
     <dependencies>
         <dependency>
@@ -70,6 +70,6 @@
     </dependencies>
 
   <scm>
-    <tag>ignite-sprint-3-release-test-branch</tag>
+    <tag>1.0.1-RC1-RELEASETEST</tag>
   </scm>
 </project>
