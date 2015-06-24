@@ -27,7 +27,7 @@ import org.jetbrains.annotations.*;
 
 import java.util.*;
 
-/**
+/** TEST
  * Defines compute grid functionality for executing tasks and closures over nodes
  * in the {@link ClusterGroup}. Instance of {@code IgniteCompute} is obtained from {@link Ignite}
  * as follows:
