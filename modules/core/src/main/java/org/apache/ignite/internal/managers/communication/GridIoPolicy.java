@@ -43,7 +43,10 @@ public enum GridIoPolicy {
     UTILITY_CACHE_POOL,
 
     /** Marshaller cache execution pool. */
-    MARSH_CACHE_POOL;
+    MARSH_CACHE_POOL,
+
+    /** DR internal messaging pool. */
+    DR_POOL;
 
     /** Enum values. */
     private static final GridIoPolicy[] VALS = values();

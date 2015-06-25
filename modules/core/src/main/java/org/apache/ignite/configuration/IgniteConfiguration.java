@@ -156,11 +156,17 @@ public class IgniteConfiguration {
     /** Default max queue capacity of system thread pool. */
     public static final int DFLT_SYSTEM_THREADPOOL_QUEUE_CAP = Integer.MAX_VALUE;
 
+    /** Default max queue capacity of DR (Data Replication) thread pool. */
+    public static final int DFLT_DR_THREADPOOL_QUEUE_CAP = 40;
+
     /** Default size of peer class loading thread pool. */
     public static final int DFLT_P2P_THREAD_CNT = 2;
 
     /** Default size of management thread pool. */
     public static final int DFLT_MGMT_THREAD_CNT = 4;
+
+    /** Default size of DR (Data Replication) thread pool. */
+    public static final int DFLT_DR_THREAD_CNT = 4;
 
     /** Default segmentation policy. */
     public static final SegmentationPolicy DFLT_SEG_PLC = STOP;
@@ -209,6 +215,9 @@ public class IgniteConfiguration {
 
     /** IGFS pool size. */
     private int igfsPoolSize = AVAILABLE_PROC_CNT;
+
+    /** DR pool size. */
+    private int drPoolSize = DFLT_DR_THREAD_CNT;
 
     /** Utility cache pool size. */
     private int utilityCachePoolSize = DFLT_SYSTEM_CORE_THREAD_CNT;
@@ -682,6 +691,17 @@ public class IgniteConfiguration {
     }
 
     /**
+     * Size of thread pool that is in charge of processing DR (Data Replication) messages.
+     * <p>
+     * If not provided, executor service will have size {@link #DFLT_DR_THREAD_CNT}.
+     *
+     * @return Thread pool size to be used for DR message processing.
+     */
+    public int getDrThreadPoolSize() {
+        return drPoolSize;
+    }
+
+    /**
      * Default size of thread pool that is in charge of processing utility cache messages.
      * <p>
      * If not provided, executor service will have size {@link #DFLT_SYSTEM_CORE_THREAD_CNT}.
@@ -786,6 +806,18 @@ public class IgniteConfiguration {
      */
     public IgniteConfiguration setIgfsThreadPoolSize(int poolSize) {
         igfsPoolSize = poolSize;
+
+        return this;
+    }
+
+    /**
+     * Set thread pool size that will be used to send and receive DR (Data Replication) messages.
+     *
+     * @param poolSize Set thread pool size.
+     * @return {@code this} for chaining.
+     */
+    public IgniteConfiguration setDrThreadPoolSize(int poolSize) {
+        drPoolSize = poolSize;
 
         return this;
     }

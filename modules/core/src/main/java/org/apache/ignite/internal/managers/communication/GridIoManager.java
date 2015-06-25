@@ -83,6 +83,9 @@ public class GridIoManager extends GridManagerAdapter<CommunicationSpi<Serializa
     /** Affinity assignment executor service. */
     private ExecutorService affPool;
 
+    /** DR (Data Replication) executor service. */
+    private ExecutorService drPool;
+
     /** Utility cache pool. */
     private ExecutorService utilityCachePool;
 
@@ -185,6 +188,7 @@ public class GridIoManager extends GridManagerAdapter<CommunicationSpi<Serializa
         p2pPool = ctx.getPeerClassLoadingExecutorService();
         sysPool = ctx.getSystemExecutorService();
         mgmtPool = ctx.getManagementExecutorService();
+        drPool  = ctx.getDrExecutorService();
         utilityCachePool = ctx.utilityCachePool();
         marshCachePool = ctx.marshallerCachePool();
         affPool = new IgniteThreadPoolExecutor(
@@ -531,7 +535,9 @@ public class GridIoManager extends GridManagerAdapter<CommunicationSpi<Serializa
                 case MANAGEMENT_POOL:
                 case AFFINITY_POOL:
                 case UTILITY_CACHE_POOL:
-                case MARSH_CACHE_POOL: {
+                case MARSH_CACHE_POOL:
+                case DR_POOL:
+                {
                     if (msg.isOrdered())
                         processOrderedMessage(nodeId, msg, plc, msgC);
                     else
@@ -539,6 +545,10 @@ public class GridIoManager extends GridManagerAdapter<CommunicationSpi<Serializa
 
                     break;
                 }
+
+                default:
+                    throw new IllegalStateException("Failed to process message dues to " +
+                        "unknown policy, [policy=" + msg.policy() + ']');
             }
         }
         catch (IgniteCheckedException e) {
@@ -567,6 +577,9 @@ public class GridIoManager extends GridManagerAdapter<CommunicationSpi<Serializa
                 return mgmtPool;
             case AFFINITY_POOL:
                 return affPool;
+
+            case DR_POOL:
+                return drPool;
 
             case UTILITY_CACHE_POOL:
                 assert utilityCachePool != null : "Utility cache pool is not configured.";

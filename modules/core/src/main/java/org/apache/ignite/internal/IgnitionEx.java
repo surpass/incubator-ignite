@@ -1296,6 +1296,9 @@ public class IgnitionEx {
         /** Marshaller cache executor service. */
         private ExecutorService marshCacheExecSvc;
 
+        /** DR cache executor service. */
+        private ExecutorService drExecSvc;
+
         /** Grid state. */
         private volatile IgniteState state = STOPPED;
 
@@ -1524,6 +1527,13 @@ public class IgnitionEx {
                 myCfg.getMarshallerCacheKeepAliveTime(),
                 new LinkedBlockingQueue<Runnable>(DFLT_SYSTEM_THREADPOOL_QUEUE_CAP));
 
+            drExecSvc = new IgniteThreadPoolExecutor(
+                    "data-replication-" + cfg.getGridName(),
+                    cfg.getDrThreadPoolSize(),
+                    cfg.getDrThreadPoolSize(),
+                    DFLT_PUBLIC_KEEP_ALIVE_TIME,
+                    new LinkedBlockingQueue<Runnable>(DFLT_DR_THREADPOOL_QUEUE_CAP));
+
             // Register Ignite MBean for current grid instance.
             registerFactoryMbean(myCfg.getMBeanServer());
 
@@ -1536,7 +1546,7 @@ public class IgnitionEx {
                 grid = grid0;
 
                 grid0.start(myCfg, utilityCacheExecSvc, marshCacheExecSvc, execSvc, sysExecSvc, p2pExecSvc, mgmtExecSvc,
-                    igfsExecSvc, restExecSvc,
+                    igfsExecSvc, restExecSvc, drExecSvc,
                     new CA() {
                         @Override public void apply() {
                             startLatch.countDown();

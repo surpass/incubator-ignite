@@ -46,6 +46,7 @@ public class GridTestKernalContext extends GridKernalContextImpl {
             null,
             null,
             null,
+            null,
             U.allPluginProviders());
 
         GridTestUtils.setFieldValue(grid(), "cfg", config());
@@ -101,5 +102,14 @@ public class GridTestKernalContext extends GridKernalContextImpl {
      */
     public void setExecutorService(ExecutorService execSvc){
         this.execSvc = execSvc;
+    }
+
+    /**
+     * Sets executor service.
+     *
+     * @param execSvc Executor service
+     */
+    public void setDrExecutorService(ExecutorService execSvc){
+        this.drExecSvc = execSvc;
     }
 }
