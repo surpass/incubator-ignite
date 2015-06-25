@@ -547,7 +547,7 @@ public class GridIoManager extends GridManagerAdapter<CommunicationSpi<Serializa
                 }
 
                 default:
-                    throw new IllegalStateException("Failed to process message dues to " +
+                    throw new IllegalStateException("Failed to process message due to " +
                         "unknown policy, [policy=" + msg.policy() + ']');
             }
         }
