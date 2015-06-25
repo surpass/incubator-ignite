@@ -30,17 +30,15 @@ import java.util.*;
 import java.util.concurrent.*;
 
 /**
- * Server that subscribes to topic messages from Kafka broker, streams its to key-value pairs into {@link
- * org.apache.ignite.IgniteDataStreamer} instance.
+ * Server that subscribes to topic messages from Kafka broker and streams its to key-value pairs into
+ * {@link IgniteDataStreamer} instance.
  * <p>
- * Uses Kafka's High Level Consumer API to read messages from Kafka
+ * Uses Kafka's High Level Consumer API to read messages from Kafka.
  *
  * @see <a href="https://cwiki.apache.org/confluence/display/KAFKA/Consumer+Group+Example">Consumer Consumer Group
  * Example</a>
  */
-public class KafkaStreamer<T, K, V>
-    extends StreamAdapter<T, K, V> {
-
+public class KafkaStreamer<T, K, V> extends StreamAdapter<T, K, V> {
     /** Logger. */
     private IgniteLogger log;
 
@@ -53,61 +51,61 @@ public class KafkaStreamer<T, K, V>
     /** Number of threads to process kafka streams. */
     private int threads;
 
-    /** Kafka Consumer Config. */
-    private ConsumerConfig consumerConfig;
+    /** Kafka consumer config. */
+    private ConsumerConfig consumerCfg;
 
-    /** Key Decoder. */
+    /** Key decoder. */
     private Decoder<K> keyDecoder;
 
-    /** Value Decoder. */
-    private Decoder<V> valueDecoder;
+    /** Value decoder. */
+    private Decoder<V> valDecoder;
 
-    /** Kafka Consumer connector. */
+    /** Kafka consumer connector. */
     private ConsumerConnector consumer;
 
     /**
-     * Sets the topic.
+     * Sets the topic name.
      *
-     * @param topic Topic Name.
+     * @param topic Topic name.
      */
-    public void setTopic(final String topic) {
+    public void setTopic(String topic) {
         this.topic = topic;
     }
 
     /**
      * Sets the threads.
      *
-     * @param threads Number of Threads.
+     * @param threads Number of threads.
      */
-    public void setThreads(final int threads) {
+    public void setThreads(int threads) {
         this.threads = threads;
     }
 
     /**
      * Sets the consumer config.
      *
-     * @param consumerConfig  Consumer configuration.
+     * @param consumerCfg Consumer configuration.
      */
-    public void setConsumerConfig(final ConsumerConfig consumerConfig) {
-        this.consumerConfig = consumerConfig;
+    public void setConsumerConfig(ConsumerConfig consumerCfg) {
+        this.consumerCfg = consumerCfg;
     }
 
     /**
      * Sets the key decoder.
      *
-     * @param keyDecoder Key Decoder.
+     * @param keyDecoder Key decoder.
      */
-    public void setKeyDecoder(final Decoder<K> keyDecoder) {
+    public void setKeyDecoder(Decoder<K> keyDecoder) {
         this.keyDecoder = keyDecoder;
     }
 
     /**
      * Sets the value decoder.
      *
-     * @param valueDecoder Value Decoder
+     * @param valDecoder Value decoder.
      */
-    public void setValueDecoder(final Decoder<V> valueDecoder) {
-        this.valueDecoder = valueDecoder;
+    public void setValueDecoder(Decoder<V> valDecoder) {
+        this.valDecoder = valDecoder;
     }
 
     /**
@@ -120,19 +118,20 @@ public class KafkaStreamer<T, K, V>
         A.notNull(getIgnite(), "ignite");
         A.notNull(topic, "topic");
         A.notNull(keyDecoder, "key decoder");
-        A.notNull(valueDecoder, "value decoder");
-        A.notNull(consumerConfig, "kafka consumer config");
+        A.notNull(valDecoder, "value decoder");
+        A.notNull(consumerCfg, "kafka consumer config");
         A.ensure(threads > 0, "threads > 0");
 
         log = getIgnite().log();
 
-        consumer = kafka.consumer.Consumer.createJavaConsumerConnector(consumerConfig);
+        consumer = kafka.consumer.Consumer.createJavaConsumerConnector(consumerCfg);
 
-        Map<String, Integer> topicCountMap = new HashMap<>();
-        topicCountMap.put(topic, threads);
+        Map<String, Integer> topicCntMap = new HashMap<>();
 
-        Map<String, List<KafkaStream<K, V>>> consumerMap = consumer.createMessageStreams(topicCountMap, keyDecoder,
-            valueDecoder);
+        topicCntMap.put(topic, threads);
+
+        Map<String, List<KafkaStream<K, V>>> consumerMap =
+            consumer.createMessageStreams(topicCntMap, keyDecoder, valDecoder);
 
         List<KafkaStream<K, V>> streams = consumerMap.get(topic);
 
@@ -140,16 +139,11 @@ public class KafkaStreamer<T, K, V>
         executor = Executors.newFixedThreadPool(threads);
 
         // Now create an object to consume the messages.
-        for (final KafkaStream<K,V> stream : streams) {
+        for (final KafkaStream<K, V> stream : streams) {
             executor.submit(new Runnable() {
                 @Override public void run() {
-
-                    ConsumerIterator<K, V> it = stream.iterator();
-
-                    while (it.hasNext()) {
-                        final MessageAndMetadata<K, V> messageAndMetadata = it.next();
+                    for (MessageAndMetadata<K, V> messageAndMetadata : stream)
                         getStreamer().addData(messageAndMetadata.key(), messageAndMetadata.message());
-                    }
                 }
             });
         }
