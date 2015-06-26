@@ -546,6 +546,7 @@ public class GridIoManager extends GridManagerAdapter<CommunicationSpi<Serializa
                     break;
                 }
 
+                // TODO: Remove.
                 default:
                     throw new IllegalStateException("Failed to process message due to " +
                         "unknown policy, [policy=" + msg.policy() + ']');
@@ -577,7 +578,6 @@ public class GridIoManager extends GridManagerAdapter<CommunicationSpi<Serializa
                 return mgmtPool;
             case AFFINITY_POOL:
                 return affPool;
-
             case DR_POOL:
                 return drPool;
 
