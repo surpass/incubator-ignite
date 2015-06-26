@@ -1532,6 +1532,7 @@ public class IgnitionEx {
                     cfg.getDrThreadPoolSize(),
                     cfg.getDrThreadPoolSize(),
                     DFLT_PUBLIC_KEEP_ALIVE_TIME,
+                    // TODO: Use DFLT_SYSTEM_THREADPOOL_QUEUE_CAP instead.
                     new LinkedBlockingQueue<Runnable>(DFLT_DR_THREADPOOL_QUEUE_CAP));
 
             // Register Ignite MBean for current grid instance.
