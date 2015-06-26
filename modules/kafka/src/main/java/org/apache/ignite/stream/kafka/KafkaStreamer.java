@@ -39,6 +39,9 @@ import java.util.concurrent.*;
  * Example</a>
  */
 public class KafkaStreamer<T, K, V> extends StreamAdapter<T, K, V> {
+    /** Retry timeout. */
+    private static final int RETRY_TIMEOUT = 10000;
+
     /** Logger. */
     private IgniteLogger log;
 
@@ -62,6 +65,9 @@ public class KafkaStreamer<T, K, V> extends StreamAdapter<T, K, V> {
 
     /** Kafka consumer connector. */
     private ConsumerConnector consumer;
+
+    /** Stopped. */
+    private volatile boolean stopped;
 
     /**
      * Sets the topic name.
@@ -138,12 +144,37 @@ public class KafkaStreamer<T, K, V> extends StreamAdapter<T, K, V> {
         // Now launch all the consumer threads.
         executor = Executors.newFixedThreadPool(threads);
 
+        stopped = false;
+
         // Now create an object to consume the messages.
         for (final KafkaStream<K, V> stream : streams) {
             executor.submit(new Runnable() {
                 @Override public void run() {
-                    for (MessageAndMetadata<K, V> messageAndMetadata : stream)
-                        getStreamer().addData(messageAndMetadata.key(), messageAndMetadata.message());
+                    while (!stopped) {
+                        try {
+                            for (ConsumerIterator<K, V> it = stream.iterator(); it.hasNext() && !stopped; ) {
+                                MessageAndMetadata<K, V> msg = it.next();
+
+                                try {
+                                    getStreamer().addData(msg.key(), msg.message());
+                                }
+                                catch (Exception e) {
+                                    log.warning("Message is ignored due to an error, msg = [" + msg + ']', e);
+                                }
+                            }
+                        }
+                        catch (Exception e) {
+                            log.warning("Message can't be consumed from stream. Retry after " +
+                                RETRY_TIMEOUT + " ms.", e);
+
+                            try {
+                                Thread.sleep(RETRY_TIMEOUT);
+                            }
+                            catch (InterruptedException ie) {
+                                // No-op.
+                            }
+                        }
+                    }
                 }
             });
         }
@@ -153,6 +184,8 @@ public class KafkaStreamer<T, K, V> extends StreamAdapter<T, K, V> {
      * Stops streamer.
      */
     public void stop() {
+        stopped = true;
+
         if (consumer != null)
             consumer.shutdown();
 
