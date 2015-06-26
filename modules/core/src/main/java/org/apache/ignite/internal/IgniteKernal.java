@@ -77,7 +77,6 @@ import javax.management.*;
 import java.io.*;
 import java.lang.management.*;
 import java.lang.reflect.*;
-import java.security.*;
 import java.text.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -111,6 +110,9 @@ public class IgniteKernal implements IgniteEx, IgniteMXBean, Externalizable {
 
     /** Periodic version check delay. */
     private static final long PERIODIC_VER_CHECK_CONN_TIMEOUT = 10 * 1000; // 10 seconds.
+
+    /** Additional periodic version check delay. */
+    private static final long ADDITIONAL_PERIODIC_VER_CHECK_CONN_TIMEOUT = 60 * 1000; // 1 min.
 
     /** Periodic starvation check interval. */
     private static final long PERIODIC_STARVATION_CHECK_FREQ = 1000 * 30;
@@ -704,6 +706,10 @@ public class IgniteKernal implements IgniteEx, IgniteMXBean, Externalizable {
 
                             // Just wait for 10 secs.
                             Thread.sleep(PERIODIC_VER_CHECK_CONN_TIMEOUT);
+
+                            // Wait an additional minut for slow connectiviti.
+                            if (verChecker.latestVersion() == null)
+                                Thread.sleep(ADDITIONAL_PERIODIC_VER_CHECK_CONN_TIMEOUT);
 
                             // Report status if one is available.
                             // No-op if status is NOT available.
