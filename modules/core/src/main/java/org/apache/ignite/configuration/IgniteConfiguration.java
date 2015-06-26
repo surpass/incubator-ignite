@@ -156,10 +156,6 @@ public class IgniteConfiguration {
     /** Default max queue capacity of system thread pool. */
     public static final int DFLT_SYSTEM_THREADPOOL_QUEUE_CAP = Integer.MAX_VALUE;
 
-    /** Default max queue capacity of DR (Data Replication) thread pool. */
-    // TODO: Remove
-    public static final int DFLT_DR_THREADPOOL_QUEUE_CAP = 40;
-
     /** Default size of peer class loading thread pool. */
     public static final int DFLT_P2P_THREAD_CNT = 2;
 
